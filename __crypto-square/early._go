@@ -1,0 +1,130 @@
+package cryptosquare222
+
+import (
+	"math"
+	"regexp"
+	"strings"
+)
+
+var regex *regexp.Regexp = regexp.MustCompile(`[^a-z0-9]`)
+
+func getRC(length int) (int, int) {
+	sqrt := int(math.Sqrt(float64(length)))
+	if sqrt*sqrt == length {
+		return sqrt, sqrt
+	}
+	if (sqrt * (sqrt + 1)) >= length {
+		return sqrt, sqrt + 1
+	}
+	return sqrt + 1, sqrt + 1
+}
+
+func Encode(pt string) string {
+	pt = strings.ToLower(pt)
+	pt = regex.ReplaceAllString(pt, "")
+	r, c := getRC(len(pt))
+	if r*c > len(pt) {
+		pt += strings.Repeat(" ", (r*c)-len(pt))
+	}
+	var square []string
+	for i := 0; i < r; i++ {
+		var start int = (i * c)
+		var written int = 0
+		var thisRow strings.Builder
+		for j := start; j < len(pt) && written < c; j, written = j+1, written+1 {
+			thisRow.WriteByte(pt[j])
+		}
+		square = append(square, thisRow.String())
+	}
+	var encoded strings.Builder
+	for i := 0; i < c; i++ {
+		for j := 0; j < r; j++ {
+			encoded.WriteByte(square[j][i])
+		}
+	}
+	var toRet strings.Builder
+	for i := 0; (i) < len(pt); i += r {
+		var start int = i
+		var written int = 1
+		for j := start; j < len(pt) && written <= r; j, written = j+1, written+1 {
+			toRet.WriteByte(encoded.String()[j])
+		}
+		if i != len(pt)-r {
+			toRet.WriteByte(' ')
+		}
+	}
+	return toRet.String()
+}
+package cryptosquare
+
+import (
+	"fmt"
+	"math"
+	"regexp"
+	"strings"
+)
+
+var regex *regexp.Regexp = regexp.MustCompile(`[^a-z0-9]`)
+
+func getRC(length int) (int, int) {
+	sqrt := int(math.Sqrt(float64(length)))
+	if sqrt*sqrt == length {
+		return sqrt, sqrt
+	}
+	if (sqrt * (sqrt + 1)) >= length {
+		return sqrt, sqrt + 1
+	}
+	return sqrt + 1, sqrt + 1
+}
+
+func Encode(pt string) string {
+	pt = strings.ToLower(pt)
+	pt = regex.ReplaceAllString(pt, "")
+	r, c := getRC(len(pt))
+	if r*c > len(pt) {
+		pt += strings.Repeat(" ", (r*c)-len(pt))
+	}
+	var newLen int = len(pt)
+	var square []string
+	for i := 0; i < newLen; i += c {
+		var written int = 0
+		var thisRow strings.Builder
+		for j := i; j < newLen && written < c; j, written = j+1, written+1 {
+			thisRow.WriteByte(pt[j])
+		}
+		square = append(square, thisRow.String())
+	}
+
+	var str2 strings.Builder
+	for i := 0; i < c; i++ {
+		var written int = 0
+		for j := i; j < newLen && written < r; j, written = j+c, written+1 {
+			str2.WriteByte(pt[j])
+		}
+		if i < c-1 {
+			str2.WriteByte(' ')
+		}
+	}
+
+	var encoded strings.Builder
+	for i := 0; i < c; i++ {
+		for j := 0; j < r; j++ {
+			encoded.WriteByte(square[j][i])
+		}
+	}
+	encodedStr := encoded.String()
+	var toRet strings.Builder
+	for i := 0; i < newLen; i += r {
+		var written int = 0
+		for j := i; j < newLen && written < r; j, written = j+1, written+1 {
+			toRet.WriteByte(encodedStr[j])
+		}
+		if i != newLen-r {
+			toRet.WriteByte(' ')
+		}
+	}
+	if str2.String() != toRet.String() {
+		fmt.Printf("%v__%v\n", str2.String(), toRet.String())
+	}
+	return toRet.String()
+}

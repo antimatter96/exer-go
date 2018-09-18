@@ -1,9 +1,5 @@
 package letter
 
-import (
-	"sync"
-)
-
 type FreqMap map[rune]int
 
 // Frequency is the already implemented function
@@ -15,14 +11,8 @@ func Frequency(s string) FreqMap {
 	return m
 }
 
-func tempFunc(st string, mutex *sync.Mutex, wg *sync.WaitGroup, m *FreqMap) {
-	defer wg.Done()
-	tempMap := Frequency(st)
-	mutex.Lock()
-	for k, v := range tempMap {
-		(*m)[k] += v
-	}
-	mutex.Unlock()
+func tempFunc(st string, ch chan FreqMap) {
+	ch <- Frequency(st)
 }
 
 // ConcurrentFrequency calls Frequency concurrently on an array of strings
@@ -30,16 +20,22 @@ func tempFunc(st string, mutex *sync.Mutex, wg *sync.WaitGroup, m *FreqMap) {
 func ConcurrentFrequency(ss []string) FreqMap {
 	m := FreqMap{}
 
-	var mutex = &sync.Mutex{}
-
-	var wg sync.WaitGroup
-	wg.Add(len(ss))
+	var n = len(ss)
+	ch := make(chan FreqMap)
 
 	for i := 0; i < len(ss); i++ {
-		go tempFunc(ss[i], mutex, &wg, &m)
+		go tempFunc(ss[i], ch)
 	}
 
-	wg.Wait()
+	for tempMap := range ch {
+		n--
+		for k, v := range tempMap {
+			m[k] += v
+		}
+		if n == 0 {
+			close(ch)
+		}
+	}
 
 	return m
 }

@@ -9,7 +9,7 @@
 | Space Age |  | x |  |
 | | | | |
 | Leap |  | x |  |
-| Triangle |  |  | x |
+| Triangle |  | x |  |
 | Proverb |  | x |  |
 | | | | |
 | RNA Transcription |  | x |  |
@@ -35,7 +35,7 @@
 | Nth Prime |  | x |  |
 | ISBN Verifier |  | x |  |
 | | | | |
-| Crypto Square |  |  | x |
+| Crypto Square |  | x |  |
 | Atbash Cipher |  | x |  |
 | Diffie Hellman |  | x |  |
 | Simple Cipher |  | x |  |
@@ -53,5 +53,8 @@
 | Prime Factors |  |  | x |
 | Armstrong Numbers |  | x |  |
 | Meetup |  |  | x |
-| 
-| 
+| | | |
+| Parallel Letter Frequency | x |  |  |
+| Series |  | x |  |
+| | | |
+| Tree Building  |  | x |  |
