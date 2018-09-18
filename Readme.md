@@ -43,7 +43,7 @@
 | | | | |
 | Secret Handshake |  | x |  |
 | Sieve |  |  | x |
-| Perfect Numbers |  |  | x |
+| Perfect Numbers |  | x |  |
 | Allergies |  | x |  |
 | All Your Base |  | x |  |
 | Variable Length Quantity |  |  | x |
