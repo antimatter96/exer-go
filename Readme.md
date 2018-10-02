@@ -57,4 +57,13 @@
 | Parallel Letter Frequency | x |  |  |
 | Series |  | x |  |
 | | | |
-| Tree Building  |  | x |  |
+| Tree Building |  | x |  |
+| Bracket Push |  | x |  |
+| Rail Fence Cipher  |  |  |  |
+| Linked List |  |  |  |
+| Binary Search |  |  |  |
+| POV |  |  |  |
+| Ledger |  |  |  |
+| Two Bucket |  |  |  |
+| | | | |
+| Robot Name |  | x |  |
