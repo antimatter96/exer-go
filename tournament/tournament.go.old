@@ -1,0 +1,111 @@
+package tournament
+
+import (
+	"fmt"
+	"io"
+	"io/ioutil"
+	"sort"
+	"strings"
+)
+
+const formatString string = "%-31v| %2v | %2v | %2v | %2v | %2v\n"
+
+type tableEntry struct {
+	name                          string
+	mp, wins, draws, loss, points int
+}
+
+func Tally(in io.Reader, out io.Writer) error {
+	bytesIn, err := ioutil.ReadAll(in)
+	if err != nil {
+		return nil
+	}
+	inputString := string(bytesIn)
+	inputStringArray := strings.Split(inputString, "\n")
+
+	var textEntries [][]string
+
+	for i := 0; i < len(inputStringArray); i++ {
+		inputStringArray[i] = strings.TrimSpace(inputStringArray[i])
+
+		if len(inputStringArray[i]) == 0 {
+			continue
+		}
+
+		temp := strings.Split(inputStringArray[i], ";")
+		if len(temp) == 3 {
+			if temp[2] == "win" || temp[2] == "loss" || temp[2] == "draw" {
+				if temp[1] == temp[0] {
+					return fmt.Errorf("Both teams are same  Error")
+				}
+				textEntries = append(textEntries, temp)
+			} else {
+				return fmt.Errorf("Not win draw loss  Error")
+			}
+		} else {
+			if inputStringArray[i][0] == '#' {
+				continue
+			}
+			return fmt.Errorf("Not a comment  Error")
+		}
+	}
+
+	indexOf := make(map[string]int)
+	var entries []*tableEntry
+	var currentIndex int
+
+	for _, entry := range textEntries {
+		if _, present := indexOf[entry[0]]; !present {
+			indexOf[entry[0]] = currentIndex
+			currentIndex++
+			entries = append(entries, &tableEntry{name: entry[0]})
+		}
+
+		if _, present := indexOf[entry[1]]; !present {
+			indexOf[entry[1]] = currentIndex
+			currentIndex++
+			entries = append(entries, &tableEntry{name: entry[1]})
+		}
+	}
+
+	for _, entry := range textEntries {
+
+		team1 := entries[indexOf[entry[0]]]
+		team2 := entries[indexOf[entry[1]]]
+
+		team1.mp++
+		team2.mp++
+
+		if entry[2] == "draw" {
+			team1.draws++
+			team2.draws++
+
+			team1.points++
+			team2.points++
+		} else if entry[2] == "win" {
+			team1.wins++
+			team2.loss++
+
+			team1.points += 3
+		} else {
+			team2.wins++
+			team1.loss++
+
+			team2.points += 3
+		}
+	}
+
+	sort.Slice(entries, func(i, j int) bool {
+		if entries[i].points != entries[j].points {
+			return entries[i].points > entries[j].points
+		}
+		return entries[i].name < entries[j].name
+	})
+
+	fmt.Fprintf(out, formatString, "Team", "MP", "W", "D", "L", "P")
+	for _, entry := range entries {
+		fmt.Fprintf(out, formatString, entry.name, entry.mp, entry.wins, entry.draws, entry.loss, entry.points)
+	}
+
+	return nil
+}
