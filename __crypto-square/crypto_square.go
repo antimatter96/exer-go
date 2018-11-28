@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var regex *regexp.Regexp = regexp.MustCompile(`[^a-z0-9]`)
+var regex = regexp.MustCompile(`[^a-z0-9]`)
 
 func getRC(length int) (int, int) {
 	sqrt := int(math.Sqrt(float64(length)))
@@ -19,6 +19,7 @@ func getRC(length int) (int, int) {
 	return sqrt + 1, sqrt + 1
 }
 
+// Encode enctypts the given plaintext string using a crypto square
 func Encode(pt string) string {
 
 	pt = strings.ToLower(pt)
@@ -29,11 +30,12 @@ func Encode(pt string) string {
 		pt += strings.Repeat(" ", (r*c)-len(pt))
 	}
 
-	var newLen int = len(pt)
+	newLen := len(pt)
 
 	var toRet strings.Builder
+	toRet.Grow(newLen)
 	for i := 0; i < c; i++ {
-		var written int = 0
+		var written int
 		for j := i; j < newLen && written < r; j, written = j+c, written+1 {
 			toRet.WriteByte(pt[j])
 		}

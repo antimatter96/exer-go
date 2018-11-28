@@ -1,0 +1,58 @@
+package pascal
+
+func row(n int) []int {
+	var x []int
+	if n < 0 {
+		return x
+	}
+
+	if n == 0 {
+		return []int{1}
+	}
+
+	x = make([]int, n+1)
+	x[0] = 1
+	if n > -1 {
+		x[n] = 1
+	}
+	for i := 1; i <= n/2+1; i++ {
+		x[i] = compute(n, i)
+	}
+	for i := 1; i < n/2+1; i++ {
+		x[n-i] = x[i]
+	}
+	return x
+}
+
+func Triangle(n int) [][]int {
+	x := make([][]int, n)
+	for i := 0; i < n; i++ {
+		x[i] = row(i)
+	}
+	return x
+}
+
+func compute(m, n int) int {
+	if m == n {
+		return 1
+	}
+	if n == 1 {
+		return m
+	}
+
+	toRet := 1
+	num := 1
+	den := 1
+
+	for i := 0; i < n; i++ {
+		num = num * (m - i)
+		den = den * (n - i)
+		if num%den == 0 {
+			toRet = toRet * (num / den)
+			num = 1
+			den = 1
+		}
+	}
+
+	return toRet
+}
